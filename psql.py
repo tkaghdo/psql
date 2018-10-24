@@ -6,11 +6,26 @@ class Psql:
         self.session_id = session_id
 
     def insert(self, table_name, column_names, column_values):
-        # Personsq
+        # PERSON1
+        # ["PERSONID", "LASTNAME", "FIRSTNAME", "ADDRESS", "CITY"]
         # [123, "smith", "john", "111 main st", "new york"]
-        # TODO you are here
+
+
+        # in folder PERSON1:
+        #    get the number of the last record in each file. they should be all equal.
+        #    insert the first value into the first column name
+        #    insert second value into second column name
+        #
+
+        max_record_count = 0
+        for i in column_values:
+            self.get_last_record_sequence(table_name, column_values)
         pass
 
+    # TODO you are here
+    def get_last_record_sequence(self, table_name, column_values):
+        with open(table_name + "/" + ".json") as json_data:
+            d = json.load(json_data)
 
     def create_db_files(self, table_name, column_names):
         try:
