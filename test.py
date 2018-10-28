@@ -8,7 +8,7 @@ session_id = current_milli_time()
 
 q1 = psql.Psql(session_id)
 
-table_name="Person1"
+table_name="PERSON1"
 column_names=["PERSONID", "LASTNAME", "FIRSTNAME", "ADDRESS", "CITY"]
 column_data_type = ["INT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"]
 

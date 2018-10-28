@@ -18,14 +18,25 @@ class Psql:
         #
 
         max_record_count = 0
-        for i in column_values:
-            self.get_last_record_sequence(table_name, column_values)
+        for i in column_names:
+            self.get_last_record_sequence(table_name, i)
         pass
 
     # TODO you are here
-    def get_last_record_sequence(self, table_name, column_values):
-        with open(table_name + "/" + ".json") as json_data:
-            d = json.load(json_data)
+    def get_last_record_sequence(self, table_name, column_name):
+        try:
+            with open(table_name + "/" + column_name + ".json") as json_data:
+                d = json.load(json_data)
+
+            print(len(d))
+            if len(d) == 0:
+
+            #for key, value in d.items():
+
+
+        except FileNotFoundError:
+            print("ERROR: TABLE " + table_name + " DOES NOT EXIST")
+
 
     def create_db_files(self, table_name, column_names):
         try:
