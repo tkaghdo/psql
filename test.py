@@ -12,10 +12,10 @@ table_name="PERSON1"
 column_names=["PERSONID", "LASTNAME", "FIRSTNAME", "ADDRESS", "CITY"]
 column_data_type = ["INT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"]
 
-# q1.create_table(table_name, column_names, column_data_type)
+#q1.create_table(table_name, column_names, column_data_type)
 
 q1.insert(table_name,
           ["PERSONID", "LASTNAME", "FIRSTNAME", "ADDRESS", "CITY"],
-          [123, "smith", "john", "111 main st", "new york"])
+          [456, "smith", "john", "111 main st", "new york"])
 
 
