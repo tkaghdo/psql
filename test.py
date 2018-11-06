@@ -8,11 +8,11 @@ session_id = current_milli_time()
 
 q1 = psql.Psql(session_id)
 
-table_name="PERSON1"
+table_name="PERSON"
 column_names=["PERSONID", "LASTNAME", "FIRSTNAME", "ADDRESS", "CITY"]
 column_data_type = ["INT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"]
 
-#q1.create_table(table_name, column_names, column_data_type)
+q1.create_table(table_name, column_names, column_data_type)
 
 q1.insert(table_name,
           ["PERSONID", "LASTNAME", "FIRSTNAME", "ADDRESS", "CITY"],

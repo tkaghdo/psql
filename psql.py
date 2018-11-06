@@ -8,31 +8,44 @@ class Psql:
     def insert(self, table_name, column_names, column_values):
         if self.does_table_exists(table_name):
             last_row_count = self.get_last_row_count(table_name)
-            for i, v in enumerate(column_names):
-                self.append(table_name, v, last_row_count + 1, column_values[i])
+            for i, column_name in enumerate(column_names):
+                self.append(table_name, column_name, last_row_count + 1, column_values[i])
             self.update_last_row_count(table_name)
 
-    def append(self, table_name, fname, record_location, value, sep=","):
-        file_name = table_name + "/" + fname + ".json"
+    def append(self, table_name, column_name, record_location, value, sep=","):
+        file_name = table_name + "/" + column_name + ".json"
         try:
             with open(file_name, 'rb+') as f:
                 f.seek(-1, os.SEEK_END)
 
                 if self.get_last_row_count(table_name) == 0:
                     sep = ""
-                print(value, type(value).__name__)
+
+                data_type = self.get_data_type(table_name, column_name)
+
+                quote = ""
+                if "VARCHAR" in data_type:
+                    quote = "\""
+
                 f.write(bytes(sep, "utf-8")
                         + b"\""
                         + bytes(str(record_location), "utf-8")
                         + b"\""
                         + b": "
-                        + bytes(str(value), "utf-8") # TODO need to put double quotes in the json files for string values
+                        + bytes(quote, "utf-8") + bytes(str(value), "utf-8") + bytes(quote, "utf-8") # TODO need to put double quotes in the json files for string values
                         + b"}")
 
         except Exception as e:
             print(e)
 
 
+    def get_data_type(self, table_name, column_name):
+        try:
+            with open(table_name + "/" + "DATA_TYPES.json", "r") as f:
+                d = json.load(f)
+            return d[column_name]
+        except FileNotFoundError as e:
+            print(e)
 
     def does_table_exists(self, table_name):
         found = False
@@ -104,7 +117,18 @@ class Psql:
         else:
             self.add_table_to_dictionary(table_name)
             self.create_db_files(table_name, column_names)
+            self.create_data_types_meta_data(table_name, column_names, column_data_type)
 
+
+    def create_data_types_meta_data(self, table_name, column_names, column_data_type):
+        d = {}
+        for i, v in enumerate(column_names):
+            d[v] = column_data_type[i]
+        try:
+            with open(table_name + "/" + "DATA_TYPES.json", "w") as f:
+                json.dump(d, f)
+        except FileNotFoundError as e:
+            print(e)
 
     def add_table_to_dictionary(self, table_name):
         with open('tables.json') as json_data:
