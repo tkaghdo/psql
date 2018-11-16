@@ -1,51 +1,10 @@
 import json
 import os
 
-class Psql:
+class DDL:
     def __init__(self, session_id):
         self.session_id = session_id
 
-    def insert(self, table_name, column_names, column_values):
-        if self.does_table_exists(table_name):
-            last_row_count = self.get_last_row_count(table_name)
-            for i, column_name in enumerate(column_names):
-                self.append(table_name, column_name, last_row_count + 1, column_values[i])
-            self.update_last_row_count(table_name)
-
-    def append(self, table_name, column_name, record_location, value, sep=","):
-        file_name = table_name + "/" + column_name + ".json"
-        try:
-            with open(file_name, 'rb+') as f:
-                f.seek(-1, os.SEEK_END)
-
-                if self.get_last_row_count(table_name) == 0:
-                    sep = ""
-
-                data_type = self.get_data_type(table_name, column_name)
-
-                quote = ""
-                if "VARCHAR" in data_type:
-                    quote = "\""
-
-                f.write(bytes(sep, "utf-8")
-                        + b"\""
-                        + bytes(str(record_location), "utf-8")
-                        + b"\""
-                        + b": "
-                        + bytes(quote, "utf-8") + bytes(str(value), "utf-8") + bytes(quote, "utf-8") # TODO need to put double quotes in the json files for string values
-                        + b"}")
-
-        except Exception as e:
-            print(e)
-
-
-    def get_data_type(self, table_name, column_name):
-        try:
-            with open(table_name + "/" + "DATA_TYPES.json", "r") as f:
-                d = json.load(f)
-            return d[column_name]
-        except FileNotFoundError as e:
-            print(e)
 
     def does_table_exists(self, table_name):
         found = False
@@ -62,27 +21,6 @@ class Psql:
             print(e)
 
         return found
-
-    def update_last_row_count(self, table_name):
-        try:
-            with open(table_name + "/" + "META.json") as json_data:
-                d = json.load(json_data)
-            d["ROW_COUNT"] = d["ROW_COUNT"] + 1
-
-            with open(table_name + "/" + "META.json", "w") as json_data:
-                json.dump(d, json_data)
-
-        except FileNotFoundError as e:
-            print(e)
-
-    def get_last_row_count(self, table_name):
-        try:
-            with open(table_name + "/" +  "META.json") as json_data:
-                d = json.load(json_data)
-            return d["ROW_COUNT"]
-        except FileNotFoundError as e:
-            print("ERROR: FILE " + table_name + "/" +  "META.json" + " NOT FOUND")
-            print(e)
 
     def create_db_files(self, table_name, column_names):
         try:
